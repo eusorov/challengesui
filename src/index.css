@@ -49,6 +49,15 @@
   .btn-lg {
     @apply px-8 py-[18px] text-base;
   }
+  .btn-xl {
+    @apply py-[22px] px-10 text-lg border-b-[6px];
+  }
+  .btn-nav {
+    @apply py-2.5 px-4 text-xs border-b-4;
+  }
+  .btn-white {
+    @apply bg-paper text-green-700 border-ink-300 hover:brightness-100;
+  }
 
   .card {
     @apply bg-paper border-2 border-b-[3px] border-ink-300 rounded-lg p-4;
