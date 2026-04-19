@@ -1,0 +1,4 @@
+services:
+  app:
+    image: ${IMAGE_FULL_NAME}
+    build: !reset null
