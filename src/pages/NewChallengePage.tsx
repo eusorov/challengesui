@@ -1,6 +1,7 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCreateChallenge } from "@/features/challenges/useChallenges";
+import { useCategories } from "@/features/challenges/useCategories";
 import { useAuthStore } from "@/features/auth/authStore";
 import { useCurrentUser } from "@/features/auth/useAuth";
 import { apiError } from "@/lib/api";
@@ -8,31 +9,55 @@ import { apiError } from "@/lib/api";
 export default function NewChallengePage() {
   const navigate = useNavigate();
   const create = useCreateChallenge();
+  const categoriesQ = useCategories();
   const me = useCurrentUser();
   const storedUser = useAuthStore((s) => s.user);
   const ownerUserId = me.data?.id ?? storedUser?.id;
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
   const [startDate, setStartDate] = useState(
     () => new Date().toISOString().slice(0, 10),
   );
   const [endDate, setEndDate] = useState("");
 
+  const sortedCategories = useMemo(() => {
+    const list = categoriesQ.data ?? [];
+    return [...list].sort((a, b) =>
+      a.localeCompare(b, undefined, { sensitivity: "base" }),
+    );
+  }, [categoriesQ.data]);
+
+  useEffect(() => {
+    if (!category && sortedCategories.length === 1) {
+      setCategory(sortedCategories[0]);
+    }
+  }, [sortedCategories, category]);
+
   function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (!ownerUserId) return;
+    const cat = category.trim();
+    if (!cat || sortedCategories.length === 0) return;
     create.mutate(
       {
         ownerUserId,
         title,
         description: description || undefined,
+        category: cat,
         startDate,
         endDate: endDate || undefined,
       },
       { onSuccess: (c) => navigate(`/challenges/${c.id}`) },
     );
   }
+
+  const canSubmit =
+    !!ownerUserId &&
+    sortedCategories.length > 0 &&
+    category.trim().length > 0 &&
+    sortedCategories.includes(category.trim());
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-10">
@@ -62,6 +87,59 @@ export default function NewChallengePage() {
             onChange={(e) => setDescription(e.target.value)}
           />
         </div>
+
+        <div>
+          <span className="label">Category</span>
+          <p className="text-sm font-medium text-ink-700 mb-2">
+            Pick one of the categories returned by{" "}
+            <code className="text-xs bg-ink-100 px-1 rounded">GET /api/categories</code>
+            .
+          </p>
+          {categoriesQ.isLoading && (
+            <div className="flex items-center gap-2 text-ink-700 font-bold text-sm py-2">
+              <span className="inline-block w-4 h-4 shrink-0 rounded-full border-2 border-ink-300 border-t-green-500 animate-spin" />
+              Loading categories…
+            </div>
+          )}
+          {categoriesQ.isError && (
+            <div className="rounded-md bg-red-50 border-2 border-red-500 text-red-800 p-3 text-sm font-bold">
+              Couldn&apos;t load categories: {apiError(categoriesQ.error)}
+            </div>
+          )}
+          {categoriesQ.isSuccess && sortedCategories.length === 0 && (
+            <div className="rounded-md bg-gold-50 border-2 border-gold-400 text-gold-800 p-3 text-sm font-bold">
+              No categories are available yet. Configure them on the backend,
+              then refresh this page.
+            </div>
+          )}
+          {categoriesQ.isSuccess && sortedCategories.length > 0 && (
+            <>
+              <select
+                id="category"
+                required
+                className="input"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                <option value="" disabled>
+                  Select a category…
+                </option>
+                {sortedCategories.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-2 text-xs font-bold text-ink-500 uppercase tracking-wider">
+                {sortedCategories.length} available
+                {sortedCategories.length > 0
+                  ? `: ${sortedCategories.join(", ")}`
+                  : ""}
+              </p>
+            </>
+          )}
+        </div>
+
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="label" htmlFor="start">Start</label>
@@ -101,7 +179,7 @@ export default function NewChallengePage() {
         <div className="flex gap-3 pt-2">
           <button
             type="submit"
-            disabled={create.isPending || !ownerUserId}
+            disabled={create.isPending || !ownerUserId || !canSubmit}
             className="btn btn-primary disabled:opacity-60"
           >
             {create.isPending ? "Creating…" : "Create challenge"}

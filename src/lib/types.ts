@@ -12,6 +12,7 @@ export interface ChallengeResponse {
   ownerUserId: number;
   title: string;
   description?: string;
+  category: string;
   startDate: string; // YYYY-MM-DD
   endDate?: string;
   createdAt: string;
@@ -24,6 +25,7 @@ export interface ChallengeRequest {
   ownerUserId: number;
   title: string;
   description?: string;
+  category: string;
   startDate: string;
   endDate?: string;
 }

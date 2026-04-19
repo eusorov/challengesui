@@ -22,6 +22,9 @@ function ChallengeCard({ c }: { c: ChallengeResponse }) {
         </div>
       )}
       <h3 className="text-lg font-black leading-tight mb-1">{c.title}</h3>
+      <span className="inline-block text-xs font-black uppercase tracking-wider px-2 py-1 rounded-md bg-ink-100 border-2 border-ink-300 text-ink-900 mb-2">
+        {c.category}
+      </span>
       <p className="text-sm font-bold text-ink-700 mb-3">
         {c.startDate}
         {c.endDate ? ` → ${c.endDate}` : " — ongoing"}

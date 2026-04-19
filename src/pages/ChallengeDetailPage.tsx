@@ -59,6 +59,11 @@ export default function ChallengeDetailPage() {
             <h1 className="text-4xl font-black tracking-tight mb-2">
               {c.title}
             </h1>
+            <p className="mb-2">
+              <span className="inline-block text-xs font-black uppercase tracking-wider px-2 py-1 rounded-md bg-ink-100 border-2 border-ink-300">
+                {c.category}
+              </span>
+            </p>
             <p className="text-ink-700 font-bold">
               {c.startDate}
               {c.endDate ? ` → ${c.endDate}` : " — ongoing"}
