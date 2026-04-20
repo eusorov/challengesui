@@ -16,6 +16,8 @@ export interface ChallengeResponse {
   startDate: string; // YYYY-MM-DD
   endDate?: string;
   createdAt: string;
+  /** When true, challenge is not publicly visible (API JSON key: `private`). */
+  "private"?: boolean;
   imageObjectKey?: string;
   imageUrl?: string;
   subtasks?: SubTaskResponse[];
@@ -28,6 +30,8 @@ export interface ChallengeRequest {
   category: string;
   startDate: string;
   endDate?: string;
+  /** Default false when omitted. API JSON key: `private`. */
+  "private"?: boolean;
 }
 
 export interface SubTaskResponse {

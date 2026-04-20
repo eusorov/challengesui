@@ -21,6 +21,7 @@ export default function NewChallengePage() {
     () => new Date().toISOString().slice(0, 10),
   );
   const [endDate, setEndDate] = useState("");
+  const [isPrivate, setIsPrivate] = useState(false);
 
   const sortedCategories = useMemo(() => {
     const list = categoriesQ.data ?? [];
@@ -48,6 +49,7 @@ export default function NewChallengePage() {
         category: cat,
         startDate,
         endDate: endDate || undefined,
+        "private": isPrivate,
       },
       { onSuccess: (c) => navigate(`/challenges/${c.id}`) },
     );
@@ -138,6 +140,28 @@ export default function NewChallengePage() {
               </p>
             </>
           )}
+        </div>
+
+        <div className="flex items-start gap-3 rounded-md border-2 border-ink-300 bg-ink-100 px-4 py-3">
+          <input
+            id="private"
+            type="checkbox"
+            checked={isPrivate}
+            onChange={(e) => setIsPrivate(e.target.checked)}
+            className="mt-1 h-5 w-5 shrink-0 rounded-sm border-2 border-ink-300 accent-green-600"
+          />
+          <div>
+            <label
+              htmlFor="private"
+              className="font-black text-sm uppercase tracking-wider text-ink-900 cursor-pointer"
+            >
+              Private challenge
+            </label>
+            <p className="text-sm font-medium text-ink-700 mt-1">
+              When enabled, only you and people you invite can see this challenge.
+              Leave off for a normal, visible challenge.
+            </p>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
