@@ -1,34 +1,34 @@
 # React app guide: screens, actions, and API mapping
 
 **Date:** 2026-04-21  
-**Purpose:** For the **React app in this repository**, use this doc for **screens, actions, HTTP mapping**, and **trackable implementation tasks** (`UI-xxx`). Canonical workflow and API semantics: [`docs/superpowers/specs/2026-04-21-main-workflows-api-design.md`](superpowers/specs/2026-04-21-main-workflows-api-design.md) (add or link from the API repo if missing here). Shorthand for endpoints and visibility: [`docs/ui-description.md`](ui-description.md). Contract detail: OpenAPI (`/v3/api-docs`, `/swagger-ui.html`). Supplementary task breakdown (epics/stories): [`docs/superpowers/specs/2026-04-21-ui-workflow-implementation-tasks-design.md`](../superpowers/specs/2026-04-21-ui-workflow-implementation-tasks-design.md).
+**Purpose:** For the **React app in this repository**, use this doc for **screens, actions, HTTP mapping**, and **trackable implementation tasks** (`UI-xxx`). **Per-ticket specs:** [`docs/ui/tickets/`](tickets/) ([`README`](tickets/README.md)). Canonical workflow and API semantics: [`docs/superpowers/specs/2026-04-21-main-workflows-api-design.md`](superpowers/specs/2026-04-21-main-workflows-api-design.md) (add or link from the API repo if missing here). Shorthand for endpoints and visibility: [`docs/ui-description.md`](ui-description.md). Contract detail: OpenAPI (`/v3/api-docs`, `/swagger-ui.html`). Supplementary task breakdown (epics/stories): [`docs/superpowers/specs/2026-04-21-ui-workflow-implementation-tasks-design.md`](../superpowers/specs/2026-04-21-ui-workflow-implementation-tasks-design.md).
 
 ---
 
 ## Implementation tasks (this repo)
 
-Each **`UI-xxx`** id is the stable handle for issues and PRs. **Status:** Done = shipped in tree; Partial = some behavior or API surface missing; Not started = no meaningful UI/hook yet.
+Each **`UI-xxx`** id is the stable handle for issues and PRs. **Detailed ticket:** one Markdown file per id under [`docs/ui/tickets/`](tickets/) (see [index](tickets/README.md)). **Status:** Done = shipped in tree; Partial = some behavior or API surface missing; Not started = no meaningful UI/hook yet.
 
-| ID | Status | Workflow | What it covers | Primary code (paths under `src/`) |
-|----|--------|----------|----------------|-------------------------------------|
-| **UI-001** | Done | Shell | Axios client, `API-Version: 1`, Bearer injection, `postForm`, `apiError`, 401 → logout + redirect | `lib/api.ts` |
-| **UI-002** | Done | Shell | `createBrowserRouter`, `/` → `LandingGate`, `/login`, `/register`, protected layout for app routes | `routes/router.tsx`, `features/landing/LandingGate.tsx`, `features/auth/ProtectedRoute.tsx` |
-| **UI-003** | Partial | Shell | Top nav + session: only **Challenges** + email + **Log out**; no **Discover / My challenges / Invites** split from spec | `components/AppShell.tsx` |
-| **UI-004** | Partial | §0 | Login (JSON), register (form-urlencoded), logout, **`GET /api/user`** via `useCurrentUser` | `pages/LoginPage.tsx`, `pages/RegisterPage.tsx`, `features/auth/useAuth.ts`, `features/auth/authStore.ts` |
-| **UI-005** | Partial | §1.1 | List at **`GET /api/challenges`** + pagination on **`ChallengesListPage`**; **no** `q` / `category` / `city` filters yet; UI copy says “Your challenges” but the hook is the **public catalog**, not **`GET /api/challenges/mine`** — align copy or add **`UI-011`** route | `pages/ChallengesListPage.tsx`, `features/challenges/useChallenges.ts` |
-| **UI-006** | Partial | §1.1 | Challenge detail: title, dates, category, subtasks tab content | `pages/ChallengeDetailPage.tsx`, `features/subtasks/useSubtasks.ts` |
-| **UI-007** | Not started | §1.4 | Participants roster **`GET /api/challenges/{id}/participants`** | — |
-| **UI-008** | Partial | §1.5, §5 | Check-ins tab: list **`GET .../check-ins`**, quick **Check in today** → **`POST /api/check-ins`**; **no** edit/delete own, **no** detail route/modal for **`GET /api/check-ins/{id}`** | `features/checkins/useCheckIns.ts`, `pages/ChallengeDetailPage.tsx` |
-| **UI-009** | Partial | §7 | Comments tab: list + post **`POST .../comments`** (body only in client — confirm **`userId`** vs OpenAPI) | `features/comments/useComments.ts`, `pages/ChallengeDetailPage.tsx` |
-| **UI-010** | Partial | §3.1 | **New challenge** → **`POST /api/challenges`** with `ownerUserId`, categories from **`GET /api/categories`**; **no** **`POST /api/schedules`** in flow yet | `pages/NewChallengePage.tsx`, `features/challenges/useChallenges.ts`, `features/challenges/useCategories.ts` |
-| **UI-011** | Not started | §1.2 | **My challenges** — **`GET /api/challenges/mine`**, route e.g. `/my-challenges` | — |
-| **UI-012** | Not started | §1.3 | **Invites** received/sent, **`GET /api/invites`**, links to challenge / invite detail | — |
-| **UI-013** | Not started | §2 | **Join** **`POST /api/challenges/{id}/join`**, **Accept** invite **`PUT /api/invites/{id}`** | — |
-| **UI-014** | Not started | §3.2–§3.3 | Schedules **`POST`/`PUT`/`DELETE`** as needed; subtasks **CRUD**; owner “manage” mode | — |
-| **UI-015** | Not started | §3.4, opt. | Edit/delete challenge **`PUT`/`DELETE`**, optional **`POST .../image`** | — |
-| **UI-016** | Not started | §4 | Owner **Invite** modal **`POST /api/invites`**, optional sent list, invite detail / revoke | — |
-| **UI-017** | Deferred | §6 | Reminders / push — wait for API | see tickets in §6 below |
-| **UI-018** | Done | — | Marketing **landing** (logged-out `/`) | `pages/LandingPage.tsx`, `features/landing/*` |
+| ID | Ticket | Status | Workflow | What it covers | Primary code (paths under `src/`) |
+|----|--------|--------|----------|----------------|-------------------------------------|
+| **UI-001** | [ticket](tickets/UI-001-api-client.md) | Done | Shell | Axios client, `API-Version: 1`, Bearer injection, `postForm`, `apiError`, 401 → logout + redirect | `lib/api.ts` |
+| **UI-002** | [ticket](tickets/UI-002-router-protected-layout.md) | Done | Shell | `createBrowserRouter`, `/` → `LandingGate`, `/login`, `/register`, protected layout for app routes | `routes/router.tsx`, `features/landing/LandingGate.tsx`, `features/auth/ProtectedRoute.tsx` |
+| **UI-003** | [ticket](tickets/UI-003-app-shell-navigation.md) | Partial | Shell | Top nav + session: only **Challenges** + email + **Log out**; no **Discover / My challenges / Invites** split from spec | `components/AppShell.tsx` |
+| **UI-004** | [ticket](tickets/UI-004-auth-session-current-user.md) | Partial | §0 | Login (JSON), register (form-urlencoded), logout, **`GET /api/user`** via `useCurrentUser` | `pages/LoginPage.tsx`, `pages/RegisterPage.tsx`, `features/auth/useAuth.ts`, `features/auth/authStore.ts` |
+| **UI-005** | [ticket](tickets/UI-005-discover-challenge-list.md) | Partial | §1.1 | List at **`GET /api/challenges`** + pagination on **`ChallengesListPage`**; **no** `q` / `category` / `city` filters yet; UI copy says “Your challenges” but the hook is the **public catalog**, not **`GET /api/challenges/mine`** — align copy or add **`UI-011`** route | `pages/ChallengesListPage.tsx`, `features/challenges/useChallenges.ts` |
+| **UI-006** | [ticket](tickets/UI-006-challenge-detail-core.md) | Partial | §1.1 | Challenge detail: title, dates, category, subtasks tab content | `pages/ChallengeDetailPage.tsx`, `features/subtasks/useSubtasks.ts` |
+| **UI-007** | [ticket](tickets/UI-007-participants-roster.md) | Not started | §1.4 | Participants roster **`GET /api/challenges/{id}/participants`** | — |
+| **UI-008** | [ticket](tickets/UI-008-check-ins-list-and-create.md) | Partial | §1.5, §5 | Check-ins tab: list **`GET .../check-ins`**, quick **Check in today** → **`POST /api/check-ins`**; **no** edit/delete own, **no** detail route/modal for **`GET /api/check-ins/{id}`** | `features/checkins/useCheckIns.ts`, `pages/ChallengeDetailPage.tsx` |
+| **UI-009** | [ticket](tickets/UI-009-comments-thread.md) | Partial | §7 | Comments tab: list + post **`POST .../comments`** (body only in client — confirm **`userId`** vs OpenAPI) | `features/comments/useComments.ts`, `pages/ChallengeDetailPage.tsx` |
+| **UI-010** | [ticket](tickets/UI-010-create-challenge-form.md) | Partial | §3.1 | **New challenge** → **`POST /api/challenges`** with `ownerUserId`, categories from **`GET /api/categories`**; **no** **`POST /api/schedules`** in flow yet | `pages/NewChallengePage.tsx`, `features/challenges/useChallenges.ts`, `features/challenges/useCategories.ts` |
+| **UI-011** | [ticket](tickets/UI-011-my-challenges.md) | Not started | §1.2 | **My challenges** — **`GET /api/challenges/mine`**, route e.g. `/my-challenges` | — |
+| **UI-012** | [ticket](tickets/UI-012-invites-lists.md) | Not started | §1.3 | **Invites** received/sent, **`GET /api/invites`**, links to challenge / invite detail | — |
+| **UI-013** | [ticket](tickets/UI-013-join-and-accept-invite.md) | Not started | §2 | **Join** **`POST /api/challenges/{id}/join`**, **Accept** invite **`PUT /api/invites/{id}`** | — |
+| **UI-014** | [ticket](tickets/UI-014-schedules-and-subtasks-crud.md) | Not started | §3.2–§3.3 | Schedules **`POST`/`PUT`/`DELETE`** as needed; subtasks **CRUD**; owner “manage” mode | — |
+| **UI-015** | [ticket](tickets/UI-015-edit-delete-challenge-image.md) | Not started | §3.4, opt. | Edit/delete challenge **`PUT`/`DELETE`**, optional **`POST .../image`** | — |
+| **UI-016** | [ticket](tickets/UI-016-owner-invite-flow.md) | Not started | §4 | Owner **Invite** modal **`POST /api/invites`**, optional sent list, invite detail / revoke | — |
+| **UI-017** | [ticket](tickets/UI-017-reminders-deferred.md) | Deferred | §6 | Reminders / push — wait for API | see tickets in §6 below |
+| **UI-018** | [ticket](tickets/UI-018-marketing-landing.md) | Done | — | Marketing **landing** (logged-out `/`) | `pages/LandingPage.tsx`, `features/landing/*` |
 
 **Suggested next work (by dependency):** finish **UI-003** nav model → **UI-005** (filters + clarify discover vs mine + **UI-011**) → **UI-007** → **UI-012**–**UI-013** → **UI-014**–**UI-016** → harden **UI-008** / **UI-009**.
 
@@ -326,7 +326,7 @@ Cross-reference: [Implementation tasks](#implementation-tasks-this-repo).
 
 | This guide | Spec | Tasks |
 |------------|------|--------|
-| Sections **0–7** | [`2026-04-21-main-workflows-api-design.md`](superpowers/specs/2026-04-21-main-workflows-api-design.md) same numbers (when present) | **UI-001**–**UI-018** |
+| Sections **0–7** | [`2026-04-21-main-workflows-api-design.md`](superpowers/specs/2026-04-21-main-workflows-api-design.md) same numbers (when present) | **UI-001**–**UI-018** — detailed files in [`docs/ui/tickets/`](tickets/) |
 
 ---
 
@@ -335,4 +335,5 @@ Cross-reference: [Implementation tasks](#implementation-tasks-this-repo).
 - Each workflow maps **screens → actions (links/buttons/forms) → HTTP method + path**.  
 - **§6** / **§7** scoped so React work does not over-commit to unfinished API behavior.  
 - Rollup summaries explicitly excluded from UI (no list endpoint).  
-- **Implementation tasks** table reflects **this repo** as of the last doc edit; update statuses when **`UI-xxx`** scope changes.
+- **Implementation tasks** table reflects **this repo** as of the last doc edit; update statuses when **`UI-xxx`** scope changes.  
+- Each **`UI-xxx`** has a **detailed ticket** under [`docs/ui/tickets/`](tickets/); keep ticket body in sync when closing work.
